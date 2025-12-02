@@ -10,22 +10,22 @@ namespace AIS.Models
         {
             get; set;
         }
-        public required string FirstName { 
+        public  string FirstName { 
             get; set;
         }
-        public required string LastName
+        public  string LastName
         {
             get; set;
         }
-        public required string Login
+        public  string Login
         {
             get; set;
         } 
-        public required string Password
+        public  string Password
         {
             get; set;
         } 
-        public required string Role //admin, teacher, student, make enum
+        public  string Role //admin, teacher, student, make enum
         {
             get; set;
         }

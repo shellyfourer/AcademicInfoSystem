@@ -6,10 +6,10 @@ namespace AIS.Models
 {
     public class Subject
     {
-        public required int SubjectId { 
+        public  int SubjectId { 
             get; set; 
         }
-        public required string SubjectName { 
+        public  string SubjectName { 
             get; set;
         }
     }

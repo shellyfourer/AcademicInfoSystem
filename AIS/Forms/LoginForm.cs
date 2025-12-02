@@ -8,6 +8,7 @@ using System.Windows.Forms;
 
 using AIS.Repositories;
 using AIS.Models;
+using AIS.Forms;
 
 namespace AIS
 {
@@ -39,9 +40,9 @@ namespace AIS
             MessageBox.Show($"Welcome, {user.FirstName}! Role: {user.Role}");
 
             // open different UI based on role
-            //if (user.Role == "admin") new AdminForm().Show();
-            //else if (user.Role == "teacher") new TeacherForm().Show();
-            //else new StudentForm().Show();
+            if (user.Role == "admin") new AdminDashboard().Show();
+            //else if (user.Role == "teacher") new TeacherDashboard().Show();
+            //else new StudentDashboar().Show();
 
             this.Hide();
         }

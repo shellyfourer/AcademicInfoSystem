@@ -6,23 +6,23 @@ namespace AIS.Models
 {
     public class Grade
     {
-        public required int GradeId
+        public  int GradeId
         {
             get; set;
         }
-        public required int StudentId
+        public  int StudentId
         {
             get; set;
         }
-        public required int SubjectId
+        public  int SubjectId
         {
             get; set;
         }
-        public required int GradeValue
+        public  int GradeValue
         {
             get; set;
         }
-        public required DateTime DateCreated
+        public  DateTime DateCreated
         {
             get; set;
         }

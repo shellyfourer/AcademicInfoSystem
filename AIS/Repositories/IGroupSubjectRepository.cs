@@ -8,6 +8,7 @@ namespace AIS.Repositories
     {
         GroupSubject? GetGroupSubjectById(int groupSubjectId); 
         List<GroupSubject> GetAllGroupSubjects(); 
+        List<int> GetSubjectsByGroupId(int studentGroupId);
         void AddGroupSubject(GroupSubject groupSubject);
         void DeleteGroupSubject(int groupSubjectId);
         void UpdateGroupSubject(GroupSubject groupSubject);

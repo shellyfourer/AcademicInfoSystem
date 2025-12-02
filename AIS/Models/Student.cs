@@ -6,13 +6,13 @@ namespace AIS.Models
 {
     public class Student
     {
-        public required int StudentId { 
+        public  int StudentId { 
             get; set; 
         }
-        public required int UserId { 
+        public  int UserId { 
             get; set;
         }
-        public required int StudentGroupId{ 
+        public  int StudentGroupId{ 
             get; set;
         }
     }

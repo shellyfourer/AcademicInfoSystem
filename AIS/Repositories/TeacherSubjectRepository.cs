@@ -32,6 +32,33 @@ namespace AIS.Repositories
                 return null;
             }
         }
+        public List<Teacher> GetTeachersBySubjectId(int subjectId)
+        {
+            List<Teacher> teachers = new List<Teacher>();
+
+            using var conn = DatabaseConnection.GetConnection();
+            conn.Open();
+
+            string query = @"SELECT teachers.teacher_id, teachers.user_id 
+                     FROM teacher_subjects
+                     JOIN teachers ON teacher_subjects.teacher_id = teachers.teacher_id
+                     WHERE teacher_subjects.subject_id = @subjectId";
+
+            using var cmd = new MySqlCommand(query, conn);
+            cmd.Parameters.AddWithValue("@subjectId", subjectId);
+
+            using var reader = cmd.ExecuteReader();
+            while (reader.Read())
+            {
+                teachers.Add(new Teacher
+                {
+                    TeacherId = reader.GetInt32("teacher_id"),
+                    UserId = reader.GetInt32("user_id")
+                });
+            }
+
+            return teachers;
+        }
         public List<TeacherSubject> GetAllTeacherSubjects()
         {
             using var conn = DatabaseConnection.GetConnection();

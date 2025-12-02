@@ -6,13 +6,13 @@ namespace AIS.Models
 {
     public class TeacherSubject
     {
-        public required int TeacherSubjectId { 
+        public  int TeacherSubjectId { 
             get; set; 
         }
-        public required int TeacherId { 
+        public  int TeacherId { 
             get; set;
         }
-        public required int SubjectId { 
+        public  int SubjectId { 
             get; set;
         }
     }

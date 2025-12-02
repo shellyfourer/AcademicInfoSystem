@@ -8,6 +8,7 @@ namespace AIS.Repositories
     public interface ITeacherSubjectRepository
     {
         TeacherSubject? GetTeacherSubjectById(int teacherSubjectId);
+        List<Teacher> GetTeachersBySubjectId(int subjectId);
         List<TeacherSubject> GetAllTeacherSubjects(); 
         void AddTeacherSubject(TeacherSubject teacherSubject);
         void DeleteTeacherSubject(int teacherSubjectId);

@@ -96,6 +96,9 @@ namespace AIS.Repositories
             cmd.Parameters.AddWithValue("@role", user.Role);
             //we execute the command
             cmd.ExecuteNonQuery();
+            //we get the last inserted id and set it to the user object
+            cmd.CommandText = "SELECT LAST_INSERT_ID();";
+            user.UserId = Convert.ToInt32(cmd.ExecuteScalar());
         }
         public void DeleteUser(int userId)
         {

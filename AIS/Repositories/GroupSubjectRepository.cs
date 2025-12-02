@@ -28,6 +28,25 @@ namespace AIS.Repositories
             }
             return null;
         }
+        public List<int> GetSubjectsByGroupId(int studentGroupId)
+        {
+            var subjects = new List<int>();
+
+            using var conn = DatabaseConnection.GetConnection();
+            conn.Open();
+
+            string query = @"SELECT subject_id FROM group_subjects WHERE student_group_id = @groupId";
+
+            using var cmd = new MySqlCommand(query, conn);
+            cmd.Parameters.AddWithValue("@groupId", studentGroupId);
+
+            using var reader = cmd.ExecuteReader();
+            while (reader.Read())
+                subjects.Add(reader.GetInt32("subject_id"));
+
+            return subjects;
+        }
+
         public List<GroupSubject> GetAllGroupSubjects()
         {
             var groupSubjects = new List<GroupSubject>();

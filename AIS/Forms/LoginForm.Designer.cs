@@ -36,7 +36,7 @@
             // 
             // btnLogin
             // 
-            btnLogin.Location = new Point(299, 245);
+            btnLogin.Location = new Point(343, 264);
             btnLogin.Name = "btnLogin";
             btnLogin.Size = new Size(85, 23);
             btnLogin.TabIndex = 0;
@@ -46,7 +46,7 @@
             // 
             // txtUsername
             // 
-            txtUsername.Location = new Point(299, 146);
+            txtUsername.Location = new Point(343, 165);
             txtUsername.Name = "txtUsername";
             txtUsername.PlaceholderText = "Username";
             txtUsername.Size = new Size(110, 23);
@@ -54,7 +54,7 @@
             // 
             // txtPassword
             // 
-            txtPassword.Location = new Point(299, 195);
+            txtPassword.Location = new Point(343, 214);
             txtPassword.Name = "txtPassword";
             txtPassword.PlaceholderText = "Password";
             txtPassword.Size = new Size(110, 23);
@@ -65,7 +65,7 @@
             // 
             lblError.AutoSize = true;
             lblError.ForeColor = Color.Red;
-            lblError.Location = new Point(299, 299);
+            lblError.Location = new Point(343, 318);
             lblError.Name = "lblError";
             lblError.Size = new Size(0, 15);
             lblError.TabIndex = 5;
@@ -74,12 +74,13 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(699, 436);
+            ClientSize = new Size(800, 450);
             Controls.Add(lblError);
             Controls.Add(txtPassword);
             Controls.Add(txtUsername);
             Controls.Add(btnLogin);
             Name = "LoginForm";
+            StartPosition = FormStartPosition.CenterScreen;
             Text = "LoginForm";
             ResumeLayout(false);
             PerformLayout();
