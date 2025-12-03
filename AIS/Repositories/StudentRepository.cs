@@ -70,14 +70,14 @@ namespace AIS.Repositories
             using var conn = DatabaseConnection.GetConnection();
             conn.Open();
             //we make the query string with parameters
-            string query = "INSERT INTO students (user_id, student_group_id) VALUES (@userId, @studentGroupId)";
+            string query = "INSERT INTO students (user_id, student_group_id) VALUES (@userId, @studentGroupId); SELECT LAST_INSERT_ID();";
             //now we make a mysql command that will automatically dispose itself by "using"
             using var cmd = new MySqlCommand(query, conn);
             //now we add parameters to avoid sql injection
             cmd.Parameters.AddWithValue("@userId", student.UserId);
             cmd.Parameters.AddWithValue("@studentGroupId", student.StudentGroupId);
             //we execute the command
-            cmd.ExecuteNonQuery();
+            student.StudentId = Convert.ToInt32(cmd.ExecuteScalar());
         }
         public void DeleteStudent(int studentId)
         {

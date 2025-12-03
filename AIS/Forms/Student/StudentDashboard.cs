@@ -23,32 +23,36 @@ namespace AIS.Forms.Student
 
         private void LoadGrades()
         {
+            var grades = _student.ViewGrades();           // Grades only for this student
+            var subjects = _student.ViewSubjects();       // All subjects assigned to this student's group
 
-            var grades = _student.ViewGrades();
-
-            var subjectRepo = new SubjectRepository();
             var teacherSubjectRepo = new TeacherSubjectRepository();
             var userRepo = new UserRepository();
 
-            var display = grades.Select(g => new
+            var display = subjects.Select(subject =>
             {
-                Subject = subjectRepo.GetSubjectById(g.SubjectId)?.SubjectName,
+                // Try to find a grade for this subject (or null)
+                var grade = grades.FirstOrDefault(g => g.SubjectId == subject.SubjectId);
 
-                Teacher = teacherSubjectRepo
-                    .GetTeachersBySubjectId(g.SubjectId)
-                    .Select(t =>
-                    {
-                        var teacherUser = userRepo.GetUserById(t.UserId);
-                        return teacherUser.FirstName + " " + teacherUser.LastName;
-                    })
-                    .FirstOrDefault(),
+                // Find teacher for this subject
+                var teacher = teacherSubjectRepo
+                                .GetTeachersBySubjectId(subject.SubjectId)
+                                .Select(t => userRepo.GetUserById(t.UserId))
+                                .FirstOrDefault();
 
-                Grade = g.GradeValue,
-                Date = g.DateCreated.ToShortDateString()
-            }).ToList();
+                return new
+                {
+                    Subject = subject.SubjectName,
+                    Teacher = teacher != null ? $"{teacher.FirstName} {teacher.LastName}" : "",
+                    Grade = grade?.GradeValue ?? null,    //null if no grade
+                    Date = grade != null ? grade.DateCreated.ToShortDateString() : ""
+                };
+            })
+            .ToList();
 
             dataGridView1.DataSource = display;
         }
+
 
 
         private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)

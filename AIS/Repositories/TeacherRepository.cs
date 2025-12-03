@@ -54,10 +54,10 @@ namespace AIS.Repositories
         {
             using var conn = DatabaseConnection.GetConnection();
             conn.Open();
-            string query = "INSERT INTO teachers (user_id) VALUES (@userId)";
+            string query = "INSERT INTO teachers (user_id) VALUES (@userId); SELECT LAST_INSERT_ID();";
             using var cmd = new MySqlCommand(query, conn);
             cmd.Parameters.AddWithValue("@userId", teacher.UserId);
-            cmd.ExecuteNonQuery();
+            teacher.TeacherId = Convert.ToInt32(cmd.ExecuteScalar());
         }
         public void DeleteTeacher(int teacherId)
         {

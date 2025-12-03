@@ -83,11 +83,11 @@ namespace AIS.Repositories
         {
             using var conn = DatabaseConnection.GetConnection();
             conn.Open();
-            string query = "INSERT INTO teacher_subjects (teacher_id, subject_id) VALUES (@teacherId, @subjectId)";
+            string query = "INSERT INTO teacher_subjects (teacher_id, subject_id) VALUES (@teacherId, @subjectId); SELECT LAST_INSERT_ID();";
             using var cmd = new MySqlCommand(query, conn);
             cmd.Parameters.AddWithValue("@teacherId", teacherSubject.TeacherId);
             cmd.Parameters.AddWithValue("@subjectId", teacherSubject.SubjectId);
-            cmd.ExecuteNonQuery();
+            teacherSubject.TeacherSubjectId = Convert.ToInt32(cmd.ExecuteScalar());
         }
         public void DeleteTeacherSubject(int teacherSubjectId)
         {

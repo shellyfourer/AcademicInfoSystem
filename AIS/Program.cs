@@ -1,3 +1,5 @@
+using AIS.Database;
+
 namespace AIS
 {
     internal static class Program
@@ -6,6 +8,7 @@ namespace AIS
         static void Main()
         {
             ApplicationConfiguration.Initialize();
+            DatabaseSeeder.Seed();
             Application.Run(new LoginForm());
         }
     }

@@ -55,10 +55,10 @@ namespace AIS.Repositories
         {
             using var conn = DatabaseConnection.GetConnection();
             conn.Open();
-            string query = "INSERT INTO subjects (subject_name) VALUES (@subjectName)";
+            string query = "INSERT INTO subjects (subject_name) VALUES (@subjectName); SELECT LAST_INSERT_ID();";
             using var cmd = new MySqlCommand(query, conn);
             cmd.Parameters.AddWithValue("@subjectName", subject.SubjectName);
-            cmd.ExecuteNonQuery();
+            subject.SubjectId = Convert.ToInt32(cmd.ExecuteScalar());
         }
         public void DeleteSubject(int subjectId)
         {

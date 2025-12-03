@@ -91,11 +91,11 @@ namespace AIS.Repositories
         {
             using var connection = DatabaseConnection.GetConnection();
             connection.Open();
-            string query = "INSERT INTO group_subjects (student_group_id, subject_id) VALUES (@studentGroupId, @subjectId)";
+            string query = "INSERT INTO group_subjects (student_group_id, subject_id) VALUES (@studentGroupId, @subjectId); SELECT LAST_INSERT_ID();";
             using var command = new MySqlCommand(query, connection);
             command.Parameters.AddWithValue("@studentGroupId", groupSubject.StudentGroupId);
             command.Parameters.AddWithValue("@subjectId", groupSubject.SubjectId);
-            command.ExecuteNonQuery();
+            groupSubject.GroupSubjectId = Convert.ToInt32(command.ExecuteScalar());
         }
         public void DeleteGroupSubject(int groupSubjectId)
         {

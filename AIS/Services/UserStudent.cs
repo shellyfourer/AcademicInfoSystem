@@ -29,5 +29,21 @@ namespace AIS.Services
                        .Where(g => g.StudentId == StudentId)
                        .ToList();
         }
+        public virtual List<Subject> ViewSubjects()
+        {
+            var groupSubjectRepo = new GroupSubjectRepository();
+            var subjectRepo = new SubjectRepository();
+
+            // all subject IDs assigned to this student's group
+            var subjectIds = groupSubjectRepo.GetSubjectsByGroupId(StudentGroupId);
+
+            // load full Subject objects
+            var subjects = subjectIds
+                .Select(id => subjectRepo.GetSubjectById(id))
+                .Where(s => s != null)
+                .ToList();
+
+            return subjects!;
+        }
     }
 }

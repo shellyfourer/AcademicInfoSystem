@@ -53,15 +53,16 @@ namespace AIS.Repositories
         }
         public void AddGrade(Grade grade) 
         {
-            using var connection = DatabaseConnection.GetConnection();
-            connection.Open();
-            string query = "INSERT INTO grades (student_id, subject_id, grade_value, date_created) VALUES (@studentId, @subjectId, @gradeValue, @dateCreated)";
-            using var command = new MySqlCommand(query, connection);
-            command.Parameters.AddWithValue("@studentId", grade.StudentId);
-            command.Parameters.AddWithValue("@subjectId", grade.SubjectId);
-            command.Parameters.AddWithValue("@gradeValue", grade.GradeValue);
-            command.Parameters.AddWithValue("@dateCreated", grade.DateCreated);
-            command.ExecuteNonQuery();
+            using var conn = DatabaseConnection.GetConnection();
+            conn.Open();
+            string query = "INSERT INTO grades (student_id, subject_id, grade_value, date_created) VALUES (@studentId, @subjectId, @gradeValue, @dateCreated); SELECT LAST_INSERT_ID();";
+            using var cmd = new MySqlCommand(query, conn);
+            cmd.Parameters.AddWithValue("@studentId", grade.StudentId);
+            cmd.Parameters.AddWithValue("@subjectId", grade.SubjectId);
+            cmd.Parameters.AddWithValue("@gradeValue", grade.GradeValue);
+            cmd.Parameters.AddWithValue("@dateCreated", grade.DateCreated);
+
+            grade.GradeId = Convert.ToInt32(cmd.ExecuteScalar());
         }
         public void DeleteGrade(int gradeId) 
         {

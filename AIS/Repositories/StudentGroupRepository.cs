@@ -55,10 +55,13 @@ namespace AIS.Repositories
         {
             using var conn = DatabaseConnection.GetConnection();
             conn.Open();
-            string query = "INSERT INTO student_groups (student_group_name) VALUES (@studentGroupName)";
+
+            string query = "INSERT INTO student_groups (student_group_name) VALUES (@studentGroupName); SELECT LAST_INSERT_ID();";
+            
             using var cmd = new MySqlCommand(query, conn);
             cmd.Parameters.AddWithValue("@studentGroupName", studentGroup.StudentGroupName);
-            cmd.ExecuteNonQuery();
+            
+            studentGroup.StudentGroupId = Convert.ToInt32(cmd.ExecuteScalar());
         }
         public void DeleteStudentGroup(int studentGroupId)
         {
