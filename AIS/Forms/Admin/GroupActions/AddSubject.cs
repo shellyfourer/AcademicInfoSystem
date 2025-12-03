@@ -13,61 +13,57 @@ namespace AIS.Forms
     public partial class AddSubject : Form
     {
         private int _groupId;
+        private readonly UserAdmin _admin;
 
-        public AddSubject(int groupId)
+        public AddSubject(int groupId, UserAdmin admin)
         {
             InitializeComponent();
+            _admin = admin;
             _groupId = groupId;
             AddSubject_Load(this, EventArgs.Empty);
         }
-
 
         private void AddSubject_Load(object sender, EventArgs e)
         {
             var userRepo = new UserRepository();
             var teacherRepo = new TeacherRepository();
 
-            var teacherUsers = userRepo.GetAllUsers()
-                                       .Where(u => u.Role == "teacher")
-                                       .ToList();
+            var teachers = teacherRepo.GetAllTeachers();
 
-            //attach teacherId to each row using anonymous object
-            cmbTeacher.DataSource = teacherUsers.Select(u => new
+            var teacherList = teachers.Select(t =>
             {
-                FullName = u.FirstName + " " + u.LastName,
-                UserId = u.UserId
+                var user = userRepo.GetUserById(t.UserId);
+                return new
+                {
+                    FullName = $"{user.FirstName} {user.LastName}",
+                    TeacherId = t.TeacherId
+                };
             }).ToList();
 
+            cmbTeacher.DataSource = teacherList;
             cmbTeacher.DisplayMember = "FullName";
-            cmbTeacher.ValueMember = "UserId";
-        }
-
-
-        private void txtStudentGroup_TextChanged(object sender, EventArgs e)
-        {
-
+            cmbTeacher.ValueMember = "TeacherId";
         }
 
         private void btnCreateSubject_Click(object sender, EventArgs e)
         {
             try
             {
-                var admin = new UserAdmin();
-
                 string subjectName = txtSubject.Text.Trim();
 
-                if (subjectName == "" || cmbTeacher.SelectedItem == null)
+                if (string.IsNullOrWhiteSpace(subjectName) || cmbTeacher.SelectedItem == null)
                 {
                     MessageBox.Show("All fields must be filled.");
                     return;
                 }
 
-                int teacherUserId = (int)cmbTeacher.SelectedValue;
+                int teacherId = (int)cmbTeacher.SelectedValue;
 
+                // Assign subject to group
+                _admin.AssignSubjectToGroup(subjectName, _groupId);
 
-
-                admin.AssignSubjectToGroup(subjectName, _groupId);
-                admin.AssignTeacherToSubject(subjectName, teacherUserId);
+                // Assign teacher to subject
+                _admin.AssignTeacherToSubject(subjectName, teacherId);
 
                 MessageBox.Show("Subject assigned successfully!");
 
@@ -81,14 +77,8 @@ namespace AIS.Forms
         }
 
 
-        private void txtTeacher_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void cmbTeacher_SelectedIndexChanged(object sender, EventArgs e)
-        {
-
-        }
+        private void txtTeacher_TextChanged(object sender, EventArgs e){ }
+        private void txtStudentGroup_TextChanged(object sender, EventArgs e) { }
+        private void cmbTeacher_SelectedIndexChanged(object sender, EventArgs e) { }
     }
 }

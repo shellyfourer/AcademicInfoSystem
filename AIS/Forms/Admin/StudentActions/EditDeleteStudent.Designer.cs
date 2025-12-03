@@ -125,6 +125,7 @@
             Name = "EditDeleteStudent";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "EditDeleteStudent";
+            Load += EditDeleteStudent_Load;
             ResumeLayout(false);
             PerformLayout();
         }

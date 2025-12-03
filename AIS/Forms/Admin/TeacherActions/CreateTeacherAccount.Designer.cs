@@ -77,6 +77,7 @@
             Name = "CreateTeacherAccount";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "CreateTeacherAccount";
+            Load += CreateTeacherAccount_Load;
             ResumeLayout(false);
             PerformLayout();
         }

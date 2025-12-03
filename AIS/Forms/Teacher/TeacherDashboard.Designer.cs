@@ -1,6 +1,6 @@
-﻿namespace AIS.Forms
+﻿namespace AIS.Forms.Teacher
 {
-    partial class StudentGroupInformation
+    partial class TeacherDashboard
     {
         /// <summary>
         /// Required designer variable.
@@ -29,58 +29,33 @@
         private void InitializeComponent()
         {
             dataGridView1 = new DataGridView();
-            btnAddSubjet = new Button();
-            btnDeleteGroup = new Button();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
             SuspendLayout();
             // 
             // dataGridView1
             // 
             dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridView1.Location = new Point(51, 44);
+            dataGridView1.Location = new Point(41, 27);
             dataGridView1.Name = "dataGridView1";
-            dataGridView1.Size = new Size(709, 299);
-            dataGridView1.TabIndex = 7;
-            dataGridView1.CellContentClick += dataGridView1_CellContentClick_1;
+            dataGridView1.Size = new Size(723, 384);
+            dataGridView1.TabIndex = 0;
+            dataGridView1.CellContentClick += dataGridView1_CellContentClick;
             // 
-            // btnAddSubjet
-            // 
-            btnAddSubjet.Location = new Point(40, 383);
-            btnAddSubjet.Name = "btnAddSubjet";
-            btnAddSubjet.Size = new Size(187, 23);
-            btnAddSubjet.TabIndex = 6;
-            btnAddSubjet.Text = "Add Subject";
-            btnAddSubjet.UseVisualStyleBackColor = true;
-            btnAddSubjet.Click += btnAddSubjet_Click;
-            // 
-            // btnDeleteGroup
-            // 
-            btnDeleteGroup.Location = new Point(573, 383);
-            btnDeleteGroup.Name = "btnDeleteGroup";
-            btnDeleteGroup.Size = new Size(187, 23);
-            btnDeleteGroup.TabIndex = 8;
-            btnDeleteGroup.Text = "Delete Group";
-            btnDeleteGroup.UseVisualStyleBackColor = true;
-            btnDeleteGroup.Click += btnDeleteGroup_Click;
-            // 
-            // StudentGroupInformation
+            // TeacherDashboard
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
-            Controls.Add(btnDeleteGroup);
             Controls.Add(dataGridView1);
-            Controls.Add(btnAddSubjet);
-            Name = "StudentGroupInformation";
+            Name = "TeacherDashboard";
             StartPosition = FormStartPosition.CenterScreen;
-            Text = "StudentGroupInformation";
+            Text = "TeacherDashboard";
             ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
             ResumeLayout(false);
         }
 
         #endregion
+
         private DataGridView dataGridView1;
-        private Button btnAddSubjet;
-        private Button btnDeleteGroup;
     }
 }

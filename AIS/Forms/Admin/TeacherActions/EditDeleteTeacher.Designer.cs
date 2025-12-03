@@ -30,7 +30,6 @@
         {
             labelLastName = new Label();
             labelName = new Label();
-            label1 = new Label();
             txtLastName = new TextBox();
             txtFirstName = new TextBox();
             btnEditTeacher = new Button();
@@ -56,15 +55,6 @@
             labelName.Text = "Name";
             labelName.Click += labelName_Click;
             // 
-            // label1
-            // 
-            label1.AutoSize = true;
-            label1.Location = new Point(11, 13);
-            label1.Name = "label1";
-            label1.Size = new Size(38, 15);
-            label1.TabIndex = 15;
-            label1.Text = "label1";
-            // 
             // txtLastName
             // 
             txtLastName.Location = new Point(414, 234);
@@ -87,7 +77,7 @@
             btnEditTeacher.TabIndex = 11;
             btnEditTeacher.Text = "Confirm Changes";
             btnEditTeacher.UseVisualStyleBackColor = true;
-            btnEditTeacher.Click += btnEditStudent_Click;
+            btnEditTeacher.Click += btnEditTeacher_Click;
             // 
             // btnDeleteTeacher
             // 
@@ -106,7 +96,6 @@
             ClientSize = new Size(800, 450);
             Controls.Add(labelLastName);
             Controls.Add(labelName);
-            Controls.Add(label1);
             Controls.Add(txtLastName);
             Controls.Add(txtFirstName);
             Controls.Add(btnEditTeacher);
@@ -114,6 +103,7 @@
             Name = "EditDeleteTeacher";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "EditDeleteTeacher";
+            Load += EditDeleteTeacher_Load;
             ResumeLayout(false);
             PerformLayout();
         }
@@ -122,7 +112,6 @@
 
         private Label labelLastName;
         private Label labelName;
-        private Label label1;
         private TextBox txtLastName;
         private TextBox txtFirstName;
         private Button btnEditTeacher;

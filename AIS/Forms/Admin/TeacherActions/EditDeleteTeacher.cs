@@ -11,14 +11,16 @@ namespace AIS.Forms
 {
     public partial class EditDeleteTeacher : Form
     {
+        private readonly UserAdmin _admin;
         private readonly int _teacherId;
         private readonly TeacherRepository teacherRepo = new();
         private readonly UserRepository userRepo = new();
 
-        public EditDeleteTeacher(int teacherId)
+        public EditDeleteTeacher(int teacherId, UserAdmin admin)
         {
             InitializeComponent();
             _teacherId = teacherId;
+            _admin = admin;
             LoadTeacherData();
         }
 
@@ -55,17 +57,15 @@ namespace AIS.Forms
             if (confirm != DialogResult.Yes)
                 return;
 
-            var admin = new UserAdmin();
-            admin.DeleteTeacherAccount(_teacherId);
+            _admin.DeleteTeacherAccount(_teacherId);
             MessageBox.Show("Teacher Deleted Successfully.");
             DialogResult = DialogResult.OK;
             this.Close();
         }
 
-        private void btnEditStudent_Click(object sender, EventArgs e)
+        private void btnEditTeacher_Click(object sender, EventArgs e)
         {
-            var admin = new UserAdmin();
-            admin.EditTeacherAccount(
+            _admin.EditTeacherAccount(
             txtFirstName.Text.Trim(),
             txtLastName.Text.Trim(),
             _teacherId
@@ -73,6 +73,11 @@ namespace AIS.Forms
             MessageBox.Show("Teacher Edited Successfully.");
             DialogResult = DialogResult.OK;
             this.Close();
+        }
+
+        private void EditDeleteTeacher_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }

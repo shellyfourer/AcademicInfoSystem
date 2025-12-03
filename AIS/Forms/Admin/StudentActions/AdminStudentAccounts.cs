@@ -1,5 +1,6 @@
-﻿using AIS.Repositories;
-using AIS.Models;
+﻿using AIS.Models;
+using AIS.Repositories;
+using AIS.Services;
 using System;
 using System.Linq;
 using System.Windows.Forms;
@@ -8,14 +9,17 @@ namespace AIS.Forms
 {
     public partial class AdminStudentAccounts : Form
     {
-        StudentRepository studentRepo = new StudentRepository();
-        UserRepository userRepo = new UserRepository();
-        StudentGroupRepository groupRepo = new StudentGroupRepository();
+        private readonly UserAdmin _admin;
+        private readonly StudentRepository studentRepo = new StudentRepository();
+        private readonly UserRepository userRepo = new UserRepository();
+        private readonly StudentGroupRepository groupRepo = new StudentGroupRepository();
 
-        public AdminStudentAccounts()
+        public AdminStudentAccounts(UserAdmin admin)
         {
             InitializeComponent();
+            _admin = admin;
             LoadStudents();
+            
         }
 
         private void LoadStudents()
@@ -45,7 +49,7 @@ namespace AIS.Forms
             int studentId = (int)row.Cells["StudentId"].Value;
 
             //open edit/delete form, passing the ID
-            using (var form = new EditDeleteStudent(studentId))
+            using (var form = new EditDeleteStudent(studentId, _admin))
             {
                 var result = form.ShowDialog();
 
@@ -59,7 +63,7 @@ namespace AIS.Forms
 
         private void btnAddStudent_Click(object sender, EventArgs e)
         {
-            using (var form = new CreateStudentAccount())
+            using (var form = new CreateStudentAccount(_admin))
             {
                 var result = form.ShowDialog();
 
@@ -72,9 +76,14 @@ namespace AIS.Forms
 
         private void btnBack_Click(object sender, EventArgs e)
         {
-            var dashboard = new AdminDashboard();
+            var dashboard = new AdminDashboard(_admin);
             dashboard.Show();
             this.Close();
+        }
+
+        private void AdminStudentAccounts_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }

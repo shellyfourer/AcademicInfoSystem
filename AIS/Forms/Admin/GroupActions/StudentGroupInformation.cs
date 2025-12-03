@@ -14,14 +14,16 @@ namespace AIS.Forms
     public partial class StudentGroupInformation : Form
     {
         private int _groupId;
-        private GroupSubjectRepository _groupSubjectRepo = new GroupSubjectRepository();
-        private SubjectRepository _subjectRepo = new SubjectRepository();
-        private TeacherSubjectRepository _teacherSubjectRepo = new TeacherSubjectRepository();
-        private UserRepository _userRepo = new UserRepository();
+        private readonly UserAdmin _admin;
+        private GroupSubjectRepository _groupSubjectRepo = new();
+        private SubjectRepository _subjectRepo = new();
+        private TeacherSubjectRepository _teacherSubjectRepo = new();
+        private UserRepository _userRepo = new();
 
-        public StudentGroupInformation(int groupId)
+        public StudentGroupInformation(int groupId, UserAdmin admin)
         {
             InitializeComponent();
+            _admin = admin;
             _groupId = groupId;
             LoadGroupSubjects();
         }
@@ -52,7 +54,7 @@ namespace AIS.Forms
         }
 
 
-        private void btnBack_Click(object sender, EventArgs e)
+        private void btnDeleteGroup_Click(object sender, EventArgs e)
         {
             var confirm = MessageBox.Show(
                "Are you sure you want to delete this group?",
@@ -63,10 +65,10 @@ namespace AIS.Forms
             if (confirm != DialogResult.Yes)
                 return;
 
-            var admin = new UserAdmin();
-            admin.DeleteStudentGroup(_groupId);
+            
+            _admin.DeleteStudentGroup(_groupId);
 
-            MessageBox.Show("Student Deleted Successfully.");
+            MessageBox.Show("Group Deleted Successfully.");
             DialogResult = DialogResult.OK;
             this.Close();
 
@@ -89,7 +91,7 @@ namespace AIS.Forms
             int subjectId = (int)row.Cells["SubjectId"].Value;
 
             //open edit/delete form, passing the ID
-            using (var form = new EditDeleteSubject(subjectId))
+            using (var form = new EditDeleteSubject(subjectId, _admin))
             {
                 var result = form.ShowDialog();
 
@@ -104,7 +106,7 @@ namespace AIS.Forms
 
         private void btnAddSubjet_Click(object sender, EventArgs e)
         {
-            using (var form = new AddSubject(_groupId))
+            using (var form = new AddSubject(_groupId, _admin))
             {
                 var result = form.ShowDialog();
 

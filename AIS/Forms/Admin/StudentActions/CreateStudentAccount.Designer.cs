@@ -90,6 +90,7 @@
             Name = "CreateStudentAccount";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "CreateStudentAccount";
+            Load += CreateStudentAccount_Load_1;
             ResumeLayout(false);
             PerformLayout();
         }

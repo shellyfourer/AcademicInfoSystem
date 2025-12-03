@@ -1,4 +1,5 @@
 ﻿using AIS.Repositories;
+using AIS.Services;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -11,26 +12,28 @@ namespace AIS.Forms
 {
     public partial class AdminStudentGroups : Form
     {
-        StudentGroupRepository studentGroupRepo = new StudentGroupRepository();
+        private readonly UserAdmin _admin;
+        private readonly StudentGroupRepository studentGroupRepo = new();
 
-        public AdminStudentGroups()
+        public AdminStudentGroups(UserAdmin admin)
         {
+            _admin = admin;
             InitializeComponent();
             LoadStudentGroups();
         }
 
         private void LoadStudentGroups()
         {
-            var studentgroups = studentGroupRepo.GetAllStudentGroups();
+           
+            var groups = studentGroupRepo.GetAllStudentGroups()
+                .Select(g => new
+                {
+                    StudentGroupId = g.StudentGroupId,
+                    StudentGroupName = g.StudentGroupName
+                })
+                .ToList();
 
-            var display = studentgroups.Select(s => new
-            {
-                StudentGroupId = s.StudentGroupId,
-                StudentGroup = studentGroupRepo.GetStudentGroupById(s.StudentGroupId)?.StudentGroupName,
-
-            }).ToList();
-
-            dataGridView1.DataSource = display;
+            dataGridView1.DataSource = groups;
             dataGridView1.Columns["StudentGroupId"].Visible = false;
         }
 
@@ -44,7 +47,7 @@ namespace AIS.Forms
             int studentgroupId = (int)row.Cells["StudentGroupId"].Value;
 
             // open form, passing the ID
-            using (var form = new StudentGroupInformation(studentgroupId))
+            using (var form = new StudentGroupInformation(studentgroupId, _admin))
             {
                 var result = form.ShowDialog();
 
@@ -58,7 +61,7 @@ namespace AIS.Forms
 
         private void btnAddGroup_Click(object sender, EventArgs e)
         {
-            using (var form = new CreateStudentGroup())
+            using (var form = new CreateStudentGroup(_admin))
             {
                 var result = form.ShowDialog();
 
@@ -71,7 +74,7 @@ namespace AIS.Forms
 
         private void btnBack_Click(object sender, EventArgs e)
         {
-            var adminForm = new AdminDashboard();
+            var adminForm = new AdminDashboard(_admin);
             adminForm.Show();
             this.Close();
         }

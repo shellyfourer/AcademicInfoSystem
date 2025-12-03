@@ -13,12 +13,14 @@ namespace AIS.Forms
 {
     public partial class AdminTeacherAccounts : Form
     {
-        TeacherRepository teacherRepo = new TeacherRepository();
-        UserRepository userRepo = new UserRepository();
+        private readonly UserAdmin _admin;
+        private readonly TeacherRepository teacherRepo = new TeacherRepository();
+        private readonly UserRepository userRepo = new UserRepository();
 
-        public AdminTeacherAccounts()
+        public AdminTeacherAccounts(UserAdmin admin)
         {
             InitializeComponent();
+            _admin = admin;
             LoadTeachers();
         }
 
@@ -48,7 +50,7 @@ namespace AIS.Forms
             int teacherId = (int)row.Cells["TeacherId"].Value;
 
             //open edit/delete form, passing the ID
-            using (var form = new EditDeleteTeacher(teacherId))
+            using (var form = new EditDeleteTeacher(teacherId, _admin))
             {
                 var result = form.ShowDialog();
 
@@ -62,14 +64,14 @@ namespace AIS.Forms
 
         private void btnBack_Click(object sender, EventArgs e)
         {
-            var dashboard = new AdminDashboard();
+            var dashboard = new AdminDashboard(_admin);
             dashboard.Show();
             this.Close();
         }
 
         private void btnAddTeacher_Click(object sender, EventArgs e)
         {
-            using (var form = new CreateTeacherAccount())
+            using (var form = new CreateTeacherAccount(_admin))
             {
                 var result = form.ShowDialog();
 
@@ -79,7 +81,12 @@ namespace AIS.Forms
                 }
             }
         }
+
+        private void AdminTeacherAccounts_Load(object sender, EventArgs e)
+        {
+
+        }
     }
-    }
+}
 
 

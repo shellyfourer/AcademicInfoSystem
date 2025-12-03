@@ -1,33 +1,33 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
-
-using AIS.Repositories;
+﻿using AIS.Forms;
+using AIS.Forms.Teacher;
+using AIS.Forms.Student;
 using AIS.Models;
-using AIS.Forms;
+using AIS.Repositories;
+using AIS.Services;
+using System;
+using System.Linq;
+using System.Windows.Forms;
 
 namespace AIS
 {
     public partial class LoginForm : Form
     {
-        UserRepository repo = new UserRepository();
+        private readonly UserRepository userRepo = new UserRepository();
+        private readonly TeacherRepository teacherRepo = new TeacherRepository();
+        private readonly StudentRepository studentRepo = new StudentRepository();
 
         public LoginForm()
         {
-            InitializeComponent();   
+            InitializeComponent();
         }
 
         private void btnLogin_Click(object sender, EventArgs e)
         {
-            string login = txtUsername.Text;
-            string password = txtPassword.Text;
+            string login = txtUsername.Text.Trim();
+            string password = txtPassword.Text.Trim();
 
-            var user = repo.GetAllUsers()
-                           .FirstOrDefault(u => u.Login == login && u.Password == password);
+            var user = userRepo.GetAllUsers()
+                               .FirstOrDefault(u => u.Login == login && u.Password == password);
 
             if (user == null)
             {
@@ -35,17 +35,73 @@ namespace AIS
                 return;
             }
 
-            // SUCCESS LOGIN
             lblError.Text = "";
             MessageBox.Show($"Welcome, {user.FirstName}! Role: {user.Role}");
 
-            // open different UI based on role
-            if (user.Role == "admin") new AdminDashboard().Show();
-            //else if (user.Role == "teacher") new TeacherDashboard().Show();
-            //else new StudentDashboar().Show();
+            //ADMIN LOGIN
+            if (user.Role == "admin")
+            {
+                var admin = new UserAdmin(
+                    user.UserId,
+                    user.FirstName,
+                    user.LastName,
+                    user.Role
+                );
 
-            this.Hide();
+                new AdminDashboard(admin).Show();
+                this.Hide();
+                return;
+            }
+
+            //TEACHER LOGIN
+            if (user.Role == "teacher")
+            {
+                var teacher = teacherRepo.GetAllTeachers()
+                                         .FirstOrDefault(t => t.UserId == user.UserId);
+
+                if (teacher == null)
+                {
+                    MessageBox.Show("Teacher record missing in database.");
+                    return;
+                }
+
+                var teacherUser = new UserTeacher(
+                    user.UserId,
+                    user.FirstName,
+                    user.LastName,
+                    user.Role,
+                    teacher.TeacherId
+                );
+
+                new TeacherDashboard(teacherUser).Show();
+                this.Hide();
+                return;
+            }
+
+            //STUDENT LOGIN
+            if (user.Role == "student")
+            {
+                var student = studentRepo.GetAllStudents()
+                                         .FirstOrDefault(s => s.UserId == user.UserId);
+
+                if (student == null)
+                {
+                    MessageBox.Show("Student record missing in database.");
+                    return;
+                }
+
+                var studentUser = new UserStudent(
+                    user.UserId,
+                    user.FirstName,
+                    user.LastName,
+                    user.Role,
+                    student.StudentId,
+                    student.StudentGroupId
+                );
+
+                new StudentDashboard(studentUser).Show();
+                this.Hide();
+            }
         }
     }
 }
-

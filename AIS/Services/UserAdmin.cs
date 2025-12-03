@@ -6,8 +6,12 @@ using AIS.Repositories;
 
 namespace AIS.Services
 {
-    internal class UserAdmin:BaseUser
+    public class UserAdmin :BaseUser
     {
+        public UserAdmin(int userId, string firstName, string lastName, string role)
+            : base(userId, firstName, lastName, role)
+        {
+        }
         public void CreateStudentAccount(string firstName, string lastName, int groupId)
         {
             var userRepo = new UserRepository();
@@ -79,7 +83,6 @@ namespace AIS.Services
             student.StudentGroupId = groupId;
             studentRepo.UpdateStudent(student);
         }
-
         public void CreateTeacherAccount(string firstName, string lastName) 
         {
             var userRepo = new UserRepository();
@@ -137,7 +140,6 @@ namespace AIS.Services
             //update teacher
             teacherRepo.UpdateTeacher(teacher);
         }
-
         public void CreateStudentGroup(string groupName)
         {
             var studentGroupRepo = new StudentGroupRepository();
@@ -165,7 +167,6 @@ namespace AIS.Services
 
             studentGroupRepo.DeleteStudentGroup(groupId);
         }
-
         public void AssignSubjectToGroup(string subjectName, int groupId)
         {
             var subjectRepo = new SubjectRepository();
@@ -227,8 +228,6 @@ namespace AIS.Services
                 SubjectId = subject.SubjectId
             });
         }
-
-
         public void EditSubject(int subjectId, string newName, int newTeacherUserId, int newGroupId)
         {
             var subjectRepo = new SubjectRepository();

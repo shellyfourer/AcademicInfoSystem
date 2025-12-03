@@ -12,6 +12,7 @@ namespace AIS.Forms.Admin.GroupActions
 {
     public partial class EditDeleteSubject : Form
     {
+        private readonly UserAdmin _admin;
         private readonly int _subjectId;
         private readonly SubjectRepository subjectRepo = new();
         private readonly UserRepository userRepo = new();
@@ -21,16 +22,17 @@ namespace AIS.Forms.Admin.GroupActions
         private readonly TeacherSubjectRepository teacherSubjectRepo = new();
 
 
-        public EditDeleteSubject(int subjectId)
+        public EditDeleteSubject(int subjectId, UserAdmin admin)
         {
             InitializeComponent();
+            _admin = admin;
             _subjectId = subjectId;
             LoadSubjectData();
         }
 
         private void LoadSubjectData()
         {
-           
+            
             var subject = subjectRepo.GetSubjectById(_subjectId);
             if (subject == null)
             {
@@ -42,54 +44,41 @@ namespace AIS.Forms.Admin.GroupActions
 
             txtSubject.Text = subject.SubjectName;
 
-
-
+            
             var teacherAssignment = teacherSubjectRepo
                 .GetAllTeacherSubjects()
                 .FirstOrDefault(ts => ts.SubjectId == _subjectId);
 
-            int currentTeacherUserId = -1;
+            int currentTeacherId = teacherAssignment?.TeacherId ?? -1;
 
-            if (teacherAssignment != null)
-            {
-                var teacher = teacherRepo.GetTeacherById(teacherAssignment.TeacherId);
-                currentTeacherUserId = teacher.UserId;
-            }
-
-            var allTeachers = teacherRepo.GetAllTeachers();
-
-            var teacherList = allTeachers
+            
+            var teacherList = teacherRepo.GetAllTeachers()
                 .Select(t =>
                 {
                     var user = userRepo.GetUserById(t.UserId);
                     return new
                     {
                         FullName = $"{user.FirstName} {user.LastName}",
-                        UserId = user.UserId   
+                        TeacherId = t.TeacherId   
                     };
                 })
                 .ToList();
 
             cmbTeacher.DataSource = teacherList;
             cmbTeacher.DisplayMember = "FullName";
-            cmbTeacher.ValueMember = "UserId";
+            cmbTeacher.ValueMember = "TeacherId";
 
-            if (currentTeacherUserId != -1)
-                cmbTeacher.SelectedValue = currentTeacherUserId;
+            if (currentTeacherId != -1)
+                cmbTeacher.SelectedValue = currentTeacherId;
 
-
-
-         
+            
             var groupAssignment = groupSubjectRepo
                 .GetAllGroupSubjects()
                 .FirstOrDefault(gs => gs.SubjectId == _subjectId);
 
             int currentGroupId = groupAssignment?.StudentGroupId ?? -1;
 
-          
-            var allGroups = groupRepo.GetAllStudentGroups();
-
-            var groupList = allGroups
+            var groupList = groupRepo.GetAllStudentGroups()
                 .Select(g => new
                 {
                     GroupName = g.StudentGroupName,
@@ -104,8 +93,6 @@ namespace AIS.Forms.Admin.GroupActions
             if (currentGroupId != -1)
                 cmbGroup.SelectedValue = currentGroupId;
         }
-
-
 
         private void labelName_Click(object sender, EventArgs e)
         {
@@ -131,8 +118,7 @@ namespace AIS.Forms.Admin.GroupActions
 
             try
             {
-                var admin = new UserAdmin();
-                admin.DeleteSubject(_subjectId);
+                _admin.DeleteSubject(_subjectId);
 
                 MessageBox.Show("Subject deleted successfully.");
 
@@ -163,11 +149,11 @@ namespace AIS.Forms.Admin.GroupActions
                     return;
                 }
 
-                int teacherUserId = (int)cmbTeacher.SelectedValue;
+                int teacherId = (int)cmbTeacher.SelectedValue;
                 int groupId = (int)cmbGroup.SelectedValue;
 
-                var admin = new UserAdmin();
-                admin.EditSubject(_subjectId, newName, teacherUserId, groupId);
+
+                _admin.EditSubject(_subjectId, newName, teacherId, groupId);
 
                 MessageBox.Show("Subject updated successfully.");
 

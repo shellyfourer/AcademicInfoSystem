@@ -1,11 +1,7 @@
 ﻿using AIS.Repositories;
 using AIS.Services;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace AIS.Forms
@@ -13,14 +9,17 @@ namespace AIS.Forms
     public partial class EditDeleteStudent : Form
     {
         private readonly int _studentId;
+        private readonly UserAdmin _admin; 
+
         private readonly StudentRepository studentRepo = new();
         private readonly UserRepository userRepo = new();
         private readonly StudentGroupRepository groupRepo = new();
 
-        public EditDeleteStudent(int studentId)
+        public EditDeleteStudent(int studentId, UserAdmin admin)
         {
             InitializeComponent();
             _studentId = studentId;
+            _admin = admin;  
             LoadStudentData();
         }
 
@@ -58,7 +57,6 @@ namespace AIS.Forms
 
         private void btnDeleteStudent_Click(object sender, EventArgs e)
         {
-
             var confirm = MessageBox.Show(
                 "Are you sure you want to delete this student?",
                 "Confirm Delete",
@@ -68,25 +66,23 @@ namespace AIS.Forms
             if (confirm != DialogResult.Yes)
                 return;
 
-            var admin = new UserAdmin();
-            admin.DeleteStudentAccount(_studentId);
+            _admin.DeleteStudentAccount(_studentId);
 
             MessageBox.Show("Student Deleted Successfully.");
             DialogResult = DialogResult.OK;
-            this.Close();
+            Close();
         }
 
         private void btnEditStudent_Click(object sender, EventArgs e)
         {
             try
             {
-                var admin = new UserAdmin();
-
                 string firstName = txtFirstName.Text.Trim();
                 string lastName = txtLastName.Text.Trim();
-                int groupId = (int)cmbGroup.SelectedValue; // <- IMPORTANT FIX
+                int groupId = (int)cmbGroup.SelectedValue;
 
-                admin.EditStudentAccount(firstName, lastName, groupId, _studentId);
+                
+                _admin.EditStudentAccount(firstName, lastName, groupId, _studentId);
 
                 MessageBox.Show("Student updated successfully.");
                 DialogResult = DialogResult.OK;
@@ -97,15 +93,8 @@ namespace AIS.Forms
                 MessageBox.Show("Error: " + ex.Message);
             }
         }
-
-        private void txtFirstName_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void cmbGroup_SelectedIndexChanged(object sender, EventArgs e)
-        {
-
-        }
+        private void txtFirstName_TextChanged(object sender, EventArgs e) { }
+        private void cmbGroup_SelectedIndexChanged(object sender, EventArgs e) { }
+        private void EditDeleteStudent_Load(object sender, EventArgs e) { }
     }
 }

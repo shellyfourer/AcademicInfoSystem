@@ -1,52 +1,41 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
+﻿using AIS.Services;
+using System;
 using System.Windows.Forms;
 
 namespace AIS.Forms
 {
     public partial class AdminDashboard : Form
     {
-        public AdminDashboard()
+        private readonly UserAdmin _admin;
+
+        public AdminDashboard(UserAdmin admin)
         {
             InitializeComponent();
+            _admin = admin;
         }
 
         private void btnStudentAccounts_Click(object sender, EventArgs e)
         {
-            if (btnStudentAccounts.Enabled)
-            {
-                AdminStudentAccounts studentAccountsForm = new AdminStudentAccounts();
-                studentAccountsForm.Show();
-                this.Hide();
-            }
-        }
-
-        private void label1_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void AdminDashboard_Load(object sender, EventArgs e)
-        {
-
+            var form = new AdminStudentAccounts(_admin);
+            form.Show();
+            this.Hide();
         }
 
         private void btnTeacherAccounts_Click(object sender, EventArgs e)
         {
-            AdminTeacherAccounts teacherAccountsForm = new AdminTeacherAccounts();
-            teacherAccountsForm.Show();
+            var form = new AdminTeacherAccounts(_admin);
+            form.Show();
             this.Hide();
         }
 
         private void btnStudentGroups_Click(object sender, EventArgs e)
         {
-            var newForm = new AdminStudentGroups();
-            newForm.Show();
+            var form = new AdminStudentGroups(_admin);
+            form.Show();
             this.Hide();
         }
+        private void label1_Click(object sender, EventArgs e) { }
+        private void AdminDashboard_Load(object sender, EventArgs e) { }
+
     }
 }

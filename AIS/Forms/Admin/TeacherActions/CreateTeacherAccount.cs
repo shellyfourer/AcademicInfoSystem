@@ -11,30 +11,45 @@ namespace AIS.Forms
 {
     public partial class CreateTeacherAccount : Form
     {
-        public CreateTeacherAccount()
+        private readonly UserAdmin _admin;
+        public CreateTeacherAccount(UserAdmin admin)
         {
             InitializeComponent();
+            _admin = admin;
         }
 
         private void btnCreateStudent_Click(object sender, EventArgs e)
         {
             try
             {
-                var UserAdmin = new UserAdmin();
-                UserAdmin.CreateTeacherAccount(
-                    txtFirstName.Text.Trim(),
-                    txtLastName.Text.Trim()
-                );
+                string firstName = txtFirstName.Text.Trim();
+                string lastName = txtLastName.Text.Trim();
+
+                if (string.IsNullOrWhiteSpace(firstName) || string.IsNullOrWhiteSpace(lastName))
+                {
+                    MessageBox.Show("All fields must be filled.");
+                    return;
+                }
+
+                _admin.CreateTeacherAccount(firstName, lastName);
+
                 MessageBox.Show("Teacher created successfully!");
+
                 txtFirstName.Clear();
                 txtLastName.Clear();
-                this.DialogResult = DialogResult.OK;
-                this.Close();
+
+                DialogResult = DialogResult.OK;
+                Close();
             }
             catch (Exception ex)
             {
                 MessageBox.Show("Error: " + ex.Message);
             }
+        }
+
+        private void CreateTeacherAccount_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }

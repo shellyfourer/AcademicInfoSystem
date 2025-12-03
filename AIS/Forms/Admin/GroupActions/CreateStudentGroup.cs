@@ -11,9 +11,11 @@ namespace AIS.Forms
 {
     public partial class CreateStudentGroup : Form
     {
-        public CreateStudentGroup()
+        private readonly UserAdmin _admin;
+        public CreateStudentGroup(UserAdmin admin)
         {
             InitializeComponent();
+            _admin = admin;
         }
 
         private void txtStudentGroup_TextChanged(object sender, EventArgs e)
@@ -25,25 +27,28 @@ namespace AIS.Forms
         {
             try
             {
-                var userAdmin = new UserAdmin();
-                userAdmin.CreateStudentGroup(
-                    txtStudentGroup.Text.Trim()
-                );
+                string groupName = txtStudentGroup.Text.Trim();
+
+                if (string.IsNullOrWhiteSpace(groupName))
+                {
+                    MessageBox.Show("Group name cannot be empty.");
+                    return;
+                }
+
+                _admin.CreateStudentGroup(groupName);
 
                 MessageBox.Show("Group created successfully!");
 
-              
                 txtStudentGroup.Clear();
-                this.DialogResult = DialogResult.OK;
-                this.Close();
+                DialogResult = DialogResult.OK;
+                Close();
             }
-
-
             catch (Exception ex)
             {
                 MessageBox.Show("Error: " + ex.Message);
             }
         }
     }
-    }
+}
+ 
 

@@ -74,6 +74,7 @@
             Name = "AdminStudentAccounts";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "AdminStudentAccounts";
+            Load += AdminStudentAccounts_Load;
             ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
             ResumeLayout(false);
         }

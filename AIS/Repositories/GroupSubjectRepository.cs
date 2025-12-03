@@ -46,7 +46,6 @@ namespace AIS.Repositories
 
             return subjects;
         }
-
         public List<GroupSubject> GetAllGroupSubjects()
         {
             var groupSubjects = new List<GroupSubject>();
@@ -66,6 +65,28 @@ namespace AIS.Repositories
             }
             return groupSubjects;
         }
+
+        public List<int> GetGroupsBySubjectId(int subjectId)
+        {
+            var result = new List<int>();
+
+            using var conn = DatabaseConnection.GetConnection();
+            conn.Open();
+
+            string query = "SELECT student_group_id FROM group_subjects WHERE subject_id = @subjectId";
+
+            using var cmd = new MySqlCommand(query, conn);
+            cmd.Parameters.AddWithValue("@subjectId", subjectId);
+
+            using var reader = cmd.ExecuteReader();
+            while (reader.Read())
+            {
+                result.Add(reader.GetInt32("student_group_id"));
+            }
+
+            return result;
+        }
+
         public void AddGroupSubject(GroupSubject groupSubject)
         {
             using var connection = DatabaseConnection.GetConnection();

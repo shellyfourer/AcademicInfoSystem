@@ -1,20 +1,29 @@
-﻿using AIS.Repositories;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using AIS.Models;
+using AIS.Repositories;
 
 namespace AIS.Services
 {
-    public class UserStudent:BaseUser
+    public class UserStudent : BaseUser
     {
-
-        public  int StudentId { get; set; }
-        public  int StudentGroupId { get; set; }
-
-        public void ViewGrades()
+        public int StudentId { get; private set; }
+        public int StudentGroupId { get; private set; }
+        public UserStudent(int userId, string firstName, string lastName, string role,
+                           int studentId, int studentGroupId)
+            : base(userId, firstName, lastName, role)
         {
-            
+            StudentId = studentId;
+            StudentGroupId = studentGroupId;
         }
-        public void ViewGroupSubjects() { }
+
+        public virtual List<Grade> ViewGrades()
+        {
+            var repo = new GradeRepository();
+            return repo.GetAllGrades()
+                       .Where(g => g.StudentId == StudentId)
+                       .ToList();
+        }
     }
 }
