@@ -17,6 +17,10 @@ namespace AIS.Services
             StudentId = studentId;
             StudentGroupId = studentGroupId;
         }
+        public override string DescribeRole()
+        {
+            return "Student: Views subjects, grades and teachers.";
+        }
 
         public virtual List<Grade> ViewGrades()
         {

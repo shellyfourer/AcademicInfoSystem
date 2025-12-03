@@ -36,7 +36,8 @@ namespace AIS
             }
 
             lblError.Text = "";
-            MessageBox.Show($"Welcome, {user.FirstName}! Role: {user.Role}");
+            MessageBox.Show($"Welcome, {user.FirstName}!");
+
 
             //ADMIN LOGIN
             if (user.Role == "admin")
@@ -48,6 +49,7 @@ namespace AIS
                     user.Role
                 );
 
+                MessageBox.Show(admin.DescribeRole());
                 new AdminDashboard(admin).Show();
                 this.Hide();
                 return;
@@ -73,6 +75,7 @@ namespace AIS
                     teacher.TeacherId
                 );
 
+                MessageBox.Show(teacherUser.DescribeRole());
                 new TeacherDashboard(teacherUser).Show();
                 this.Hide();
                 return;
@@ -98,7 +101,7 @@ namespace AIS
                     student.StudentId,
                     student.StudentGroupId
                 );
-
+                MessageBox.Show(studentUser.DescribeRole());
                 new StudentDashboard(studentUser).Show();
                 this.Hide();
             }

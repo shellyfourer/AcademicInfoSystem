@@ -21,6 +21,10 @@ namespace AIS.Services
             Role = role;
         }
 
+        public virtual string DescribeRole()
+        {
+            return "General system user.";
+        }
 
     }
 }

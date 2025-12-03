@@ -14,7 +14,10 @@ namespace AIS.Services
         {
             TeacherId = teacherId;
         }
-
+        public override string DescribeRole()
+        {
+            return "Teacher: Views subjects taught and manages student grades.";
+        }
         public virtual void AddGrade(int studentId, int subjectId, int grade)
         {
             var gradeRepo = new GradeRepository();

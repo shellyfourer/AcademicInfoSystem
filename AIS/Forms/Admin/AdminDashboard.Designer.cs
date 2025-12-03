@@ -30,13 +30,12 @@
         {
             btnStudentAccounts = new Button();
             btnTeacherAccounts = new Button();
-            label1 = new Label();
             btnStudentGroups = new Button();
             SuspendLayout();
             // 
             // btnStudentAccounts
             // 
-            btnStudentAccounts.Location = new Point(289, 202);
+            btnStudentAccounts.Location = new Point(289, 187);
             btnStudentAccounts.Name = "btnStudentAccounts";
             btnStudentAccounts.Size = new Size(202, 23);
             btnStudentAccounts.TabIndex = 0;
@@ -46,7 +45,7 @@
             // 
             // btnTeacherAccounts
             // 
-            btnTeacherAccounts.Location = new Point(289, 231);
+            btnTeacherAccounts.Location = new Point(289, 216);
             btnTeacherAccounts.Name = "btnTeacherAccounts";
             btnTeacherAccounts.Size = new Size(202, 23);
             btnTeacherAccounts.TabIndex = 1;
@@ -54,19 +53,9 @@
             btnTeacherAccounts.UseVisualStyleBackColor = true;
             btnTeacherAccounts.Click += btnTeacherAccounts_Click;
             // 
-            // label1
-            // 
-            label1.AutoSize = true;
-            label1.Location = new Point(357, 153);
-            label1.Name = "label1";
-            label1.Size = new Size(57, 15);
-            label1.TabIndex = 2;
-            label1.Text = "Welcome";
-            label1.Click += label1_Click;
-            // 
             // btnStudentGroups
             // 
-            btnStudentGroups.Location = new Point(289, 260);
+            btnStudentGroups.Location = new Point(289, 245);
             btnStudentGroups.Name = "btnStudentGroups";
             btnStudentGroups.Size = new Size(202, 23);
             btnStudentGroups.TabIndex = 3;
@@ -80,7 +69,6 @@
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
             Controls.Add(btnStudentGroups);
-            Controls.Add(label1);
             Controls.Add(btnTeacherAccounts);
             Controls.Add(btnStudentAccounts);
             Name = "AdminDashboard";
@@ -88,14 +76,12 @@
             Text = "AdminDashboard";
             Load += AdminDashboard_Load;
             ResumeLayout(false);
-            PerformLayout();
         }
 
         #endregion
 
         private Button btnStudentAccounts;
         private Button btnTeacherAccounts;
-        private Label label1;
         private Button btnStudentGroups;
     }
 }

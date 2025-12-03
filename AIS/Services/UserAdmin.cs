@@ -12,6 +12,11 @@ namespace AIS.Services
             : base(userId, firstName, lastName, role)
         {
         }
+        public override string DescribeRole()
+        {
+            return "Admin: Manages students, teachers, groups and subjects.";
+        }
+
         public void CreateStudentAccount(string firstName, string lastName, int groupId)
         {
             var userRepo = new UserRepository();
