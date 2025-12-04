@@ -28,22 +28,30 @@ namespace AIS.Forms
             var userRepo = new UserRepository();
             var teacherRepo = new TeacherRepository();
 
-            var teachers = teacherRepo.GetAllTeachers();
+           
+            var teacherUsers = userRepo.GetAllUsers()
+                                       .Where(u => u.Role == "teacher")
+                                       .ToList();
 
-            var teacherList = teachers.Select(t =>
-            {
-                var user = userRepo.GetUserById(t.UserId);
-                return new
+            var teacherList = teacherUsers
+                .Select(u =>
                 {
-                    FullName = $"{user.FirstName} {user.LastName}",
-                    TeacherId = t.TeacherId
-                };
-            }).ToList();
+                    var teacher = teacherRepo.GetAllTeachers()
+                                             .First(t => t.UserId == u.UserId);
+
+                    return new
+                    {
+                        FullName = $"{u.FirstName} {u.LastName}",
+                        TeacherId = teacher.TeacherId
+                    };
+                })
+                .ToList();
 
             cmbTeacher.DataSource = teacherList;
             cmbTeacher.DisplayMember = "FullName";
-            cmbTeacher.ValueMember = "TeacherId";
+            cmbTeacher.ValueMember = "TeacherId";   
         }
+
 
         private void btnCreateSubject_Click(object sender, EventArgs e)
         {
@@ -63,7 +71,7 @@ namespace AIS.Forms
                 _admin.AssignSubjectToGroup(subjectName, _groupId);
 
                 // Assign teacher to subject
-                _admin.AssignTeacherToSubject(subjectName, teacherId);
+                _admin.AssignTeacherToSubject(subjectName, (int)cmbTeacher.SelectedValue);
 
                 MessageBox.Show("Subject assigned successfully!");
 

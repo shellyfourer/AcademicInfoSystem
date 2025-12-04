@@ -65,14 +65,44 @@ namespace AIS.Forms
             if (confirm != DialogResult.Yes)
                 return;
 
-            
-            _admin.DeleteStudentGroup(_groupId);
+            try
+            {
+                bool deleted = _admin.DeleteStudentGroup(_groupId);
 
-            MessageBox.Show("Group Deleted Successfully.");
-            DialogResult = DialogResult.OK;
-            this.Close();
+                if (deleted)
+                {
+                    MessageBox.Show(
+                        "Group deleted successfully.",
+                        "Success",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Information
+                    );
 
+                    DialogResult = DialogResult.OK;
+                    this.Close();
+                }
+                else
+                {
+                    MessageBox.Show(
+                        "This group cannot be deleted because there are students assigned to it.\n\n" +
+                        "Please remove or reassign the students first.",
+                        "Cannot Delete Group",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Warning
+                    );
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    "Error deleting group: " + ex.Message,
+                    "Error",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error
+                );
+            }
         }
+
 
         private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {

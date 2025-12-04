@@ -32,7 +32,7 @@ namespace AIS.Forms.Admin.GroupActions
 
         private void LoadSubjectData()
         {
-            
+
             var subject = subjectRepo.GetSubjectById(_subjectId);
             if (subject == null)
             {
@@ -44,14 +44,14 @@ namespace AIS.Forms.Admin.GroupActions
 
             txtSubject.Text = subject.SubjectName;
 
-            
+
             var teacherAssignment = teacherSubjectRepo
                 .GetAllTeacherSubjects()
                 .FirstOrDefault(ts => ts.SubjectId == _subjectId);
 
             int currentTeacherId = teacherAssignment?.TeacherId ?? -1;
 
-            
+
             var teacherList = teacherRepo.GetAllTeachers()
                 .Select(t =>
                 {
@@ -59,7 +59,7 @@ namespace AIS.Forms.Admin.GroupActions
                     return new
                     {
                         FullName = $"{user.FirstName} {user.LastName}",
-                        TeacherId = t.TeacherId   
+                        TeacherId = t.TeacherId
                     };
                 })
                 .ToList();
@@ -71,7 +71,7 @@ namespace AIS.Forms.Admin.GroupActions
             if (currentTeacherId != -1)
                 cmbTeacher.SelectedValue = currentTeacherId;
 
-            
+
             var groupAssignment = groupSubjectRepo
                 .GetAllGroupSubjects()
                 .FirstOrDefault(gs => gs.SubjectId == _subjectId);
@@ -164,6 +164,11 @@ namespace AIS.Forms.Admin.GroupActions
             {
                 MessageBox.Show("Error: " + ex.Message);
             }
+        }
+
+        private void cmbTeacher_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

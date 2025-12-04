@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using AIS.Models;
 using AIS.Repositories;
+using System.Linq;
 
 namespace AIS.Services
 {
@@ -110,18 +111,34 @@ namespace AIS.Services
                 UserId = newUser.UserId,
             });
         }
-        public void DeleteTeacherAccount(int teacherId) 
-        { 
+        public void DeleteTeacherAccount(int teacherId)
+        {
             var teacherRepo = new TeacherRepository();
             var userRepo = new UserRepository();
+            var teacherSubjectRepo = new TeacherSubjectRepository();
+
+            
             var teacher = teacherRepo.GetTeacherById(teacherId);
             if (teacher == null)
-            {
                 throw new Exception("Teacher not found.");
-            }
+
+            int userId = teacher.UserId;
+
+            //Remove all teacher–subject assignments (detach teacher)
+            var assignments = teacherSubjectRepo.GetAllTeacherSubjects()
+                                                .Where(ts => ts.TeacherId == teacherId)
+                                                .ToList();
+
+            foreach (var a in assignments)
+                teacherSubjectRepo.DeleteTeacherSubject(a.TeacherSubjectId);
+
+            //Delete teacher table record
             teacherRepo.DeleteTeacher(teacherId);
-            userRepo.DeleteUser(teacher.UserId);
+
+            //Delete user record
+            userRepo.DeleteUser(userId);
         }
+
         public void EditTeacherAccount(string firstName, string lastName, int teacherId) 
         {
             var userRepo = new UserRepository();
@@ -162,16 +179,54 @@ namespace AIS.Services
 
             studentGroupRepo.AddStudentGroup(newGroup);
         }
-        public void DeleteStudentGroup(int groupId)
+        public bool DeleteStudentGroup(int groupId)
         {
             var studentGroupRepo = new StudentGroupRepository();
-            var group = studentGroupRepo.GetStudentGroupById(groupId);
+            var groupSubjectRepo = new GroupSubjectRepository();
+            var teacherSubjectRepo = new TeacherSubjectRepository();
+            var subjectRepo = new SubjectRepository();
+            var studentRepo = new StudentRepository();
+            var gradeRepo = new GradeRepository();
 
+            var group = studentGroupRepo.GetStudentGroupById(groupId);
             if (group == null)
                 throw new Exception("Group not found.");
 
+            //Check if group has students
+            bool hasStudents = studentRepo.GetAllStudents()
+                                          .Any(s => s.StudentGroupId == groupId);
+
+            if (hasStudents)
+                return false; //Cannot delete
+
+            //Delete all subjects linked to the group
+            var groupSubjects = groupSubjectRepo.GetAllGroupSubjects()
+                                               .Where(gs => gs.StudentGroupId == groupId)
+                                               .ToList();
+
+            foreach (var gs in groupSubjects)
+            {
+                int subjectId = gs.SubjectId;
+
+                var grades = gradeRepo.GetAllGrades()
+                                      .Where(g => g.SubjectId == subjectId)
+                                      .ToList();
+                grades.ForEach(g => gradeRepo.DeleteGrade(g.GradeId));
+
+                var teacherAssignments = teacherSubjectRepo.GetAllTeacherSubjects()
+                                                           .Where(ts => ts.SubjectId == subjectId)
+                                                           .ToList();
+                teacherAssignments.ForEach(ts => teacherSubjectRepo.DeleteTeacherSubject(ts.TeacherSubjectId));
+
+                groupSubjectRepo.DeleteGroupSubject(gs.GroupSubjectId);
+
+                subjectRepo.DeleteSubject(subjectId);
+            }
+
             studentGroupRepo.DeleteStudentGroup(groupId);
+            return true; //Successfully deleted
         }
+
         public void AssignSubjectToGroup(string subjectName, int groupId)
         {
             var subjectRepo = new SubjectRepository();
@@ -204,7 +259,7 @@ namespace AIS.Services
                 SubjectId = subject.SubjectId
             });
         }
-        public void AssignTeacherToSubject(string subjectName, int teacherUserId)
+        public void AssignTeacherToSubject(string subjectName, int teacherId)
         {
             var subjectRepo = new SubjectRepository();
             var teacherRepo = new TeacherRepository();
@@ -217,7 +272,7 @@ namespace AIS.Services
                 throw new Exception("Subject not found.");
 
             var teacher = teacherRepo.GetAllTeachers()
-                                     .FirstOrDefault(t => t.UserId == teacherUserId);
+                                     .FirstOrDefault(t => t.TeacherId == teacherId);
 
             if (teacher == null)
                 throw new Exception("Teacher record not found.");
@@ -233,74 +288,71 @@ namespace AIS.Services
                 SubjectId = subject.SubjectId
             });
         }
-        public void EditSubject(int subjectId, string newName, int newTeacherUserId, int newGroupId)
+
+        public void EditSubject(int subjectId, string newName, int teacherId, int groupId)
         {
             var subjectRepo = new SubjectRepository();
-            var teacherRepo = new TeacherRepository();
             var teacherSubjRepo = new TeacherSubjectRepository();
             var groupSubjRepo = new GroupSubjectRepository();
-            var groupRepo = new StudentGroupRepository();
-
 
             var subject = subjectRepo.GetSubjectById(subjectId);
             if (subject == null)
                 throw new Exception("Subject not found.");
 
-            //update subject name
+            // Update subject name
             subject.SubjectName = newName;
             subjectRepo.UpdateSubject(subject);
 
-            //update teacher assignment
-            var teacher = teacherRepo.GetAllTeachers()
-                                     .FirstOrDefault(t => t.UserId == newTeacherUserId);
-            if (teacher == null)
-                throw new Exception("Teacher not found.");
+            //Update teacher assignment
+            var teacherAssignment = teacherSubjRepo.GetAllTeacherSubjects()
+                                                  .FirstOrDefault(ts => ts.SubjectId == subjectId);
 
-            //remove any existing teacher-subject assignments
-            var teacherAssignments = teacherSubjRepo.GetAllTeacherSubjects()
-                                                    .Where(ts => ts.SubjectId == subjectId)
-                                                    .ToList();
+            // remove old assignment
+            if (teacherAssignment != null)
+                teacherSubjRepo.DeleteTeacherSubject(teacherAssignment.TeacherSubjectId);
 
-            foreach (var ts in teacherAssignments)
-                teacherSubjRepo.DeleteTeacherSubject(ts.TeacherSubjectId);
-
-            //add new assignment
+            // add new assignment
             teacherSubjRepo.AddTeacherSubject(new TeacherSubject
             {
-                SubjectId = subjectId,
-                TeacherId = teacher.TeacherId
+                TeacherId = teacherId,
+                SubjectId = subjectId
             });
 
-            //update group assignment
-            var group = groupRepo.GetStudentGroupById(newGroupId);
-            if (group == null)
-                throw new Exception("Group not found.");
+            // Update group assignment 
+            var groupAssignment = groupSubjRepo.GetAllGroupSubjects()
+                                               .Where(gs => gs.SubjectId == subjectId)
+                                               .ToList();
 
-            //remove existing old assignments
-            var groupAssignments = groupSubjRepo.GetAllGroupSubjects()
-                                                .Where(gs => gs.SubjectId == subjectId)
-                                                .ToList();
-
-            foreach (var gs in groupAssignments)
+            // group should be unique so delete all
+            foreach (var gs in groupAssignment)
                 groupSubjRepo.DeleteGroupSubject(gs.GroupSubjectId);
 
-            //add new group assignment
             groupSubjRepo.AddGroupSubject(new GroupSubject
             {
-                SubjectId = subjectId,
-                StudentGroupId = newGroupId
+                StudentGroupId = groupId,
+                SubjectId = subjectId
             });
         }
+
         public void DeleteSubject(int subjectId)
         {
             var subjectRepo = new SubjectRepository();
             var teacherSubjRepo = new TeacherSubjectRepository();
             var groupSubjRepo = new GroupSubjectRepository();
+            var gradeRepo = new GradeRepository();
 
 
             var subject = subjectRepo.GetSubjectById(subjectId);
             if (subject == null)
                 throw new Exception("Subject not found.");
+
+            //Delete all grades related to this subject
+            var grades = gradeRepo.GetAllGrades()
+                                  .Where(g => g.SubjectId == subjectId)
+                                  .ToList();
+
+            foreach (var g in grades)
+                gradeRepo.DeleteGrade(g.GradeId);
 
             // remove teacher–subject assignments
             var teacherAssignments = teacherSubjRepo.GetAllTeacherSubjects()

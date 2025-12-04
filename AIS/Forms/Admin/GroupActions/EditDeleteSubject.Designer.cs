@@ -101,6 +101,7 @@
             cmbTeacher.Name = "cmbTeacher";
             cmbTeacher.Size = new Size(121, 23);
             cmbTeacher.TabIndex = 18;
+            cmbTeacher.SelectedIndexChanged += cmbTeacher_SelectedIndexChanged;
             // 
             // cmbGroup
             // 
